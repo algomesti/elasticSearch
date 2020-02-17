@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const elasticsearch = require('elasticsearch');
 
 const app = express()
-const port = 3000
+const port = 3001
 
 let client = new elasticsearch.Client({
    hosts: [ 'http://localhost:9200']
@@ -15,56 +15,54 @@ app.use(bodyParser.json());
 app.post(
 	'/',
 	(req, res) => {
+
 		let parameters = handleParameters(req);
 		client.index(
 			{
-				index: parameters.source,
+				index: req.body.source,
 				type: 'posts',
 				body: {
 					userId : parameters.userId,
-					clientId : parameters.clientId,
-					requireClass : parameters.class,
-					requireMethod : parameters.method,
-					requireParameter : parameters.parameter,
-					verb : parameters.verb,
-					route : parameters.route,
-					hashId : parameters.hashId,
-					message : parameters.message,
-					server : parameters.server,
-					userAgent : parameters.userAgent,
-					date : parameters.date,
-					email : parameters.email,
+					action : parameters.action,
+					jsonChangedFields : parameters.jsonChangedFields,
+					table : parameters.table,
+					primaryKeyId : parameters.primaryKeyId,
+					sessionHash : parameters.sessionHash,
+					operationHash : parameters.operationHash,
+					url : parameters.url,
+					urlParameters : parameters.urlParameters,
+					createdAt : parameters.createdAt,
 				}
 
 			},
 			function(err, resp, status) {
-				//console.log(resp);
+				console.log('ERRO: ', err);
+				console.log('RESP: ', resp);
+				console.log('STAT: ', status);
 			}
 
 		);
-		res.send('sdsdsHello World!')
+		res.send('fim')
 	}
 )
 
 const handleParameters = (req) => {
+
 	if (req.body.date === '' ) {
 		req.body.date = new Date()
 	}
 	return {
 		userId : req.body.userId || null,
-		clientId : req.body.clientId || null,
-		source : req.body.source || null,
-		requireClass : req.body.class || null,
-		requireMethod : req.body.method || null,
-		requireParameter : req.body.parameter || null,
-		verb : req.body.verb || null,
-		route : req.body.route || null,
-		hashId : req.body.hashId || null,
-		message : req.body.message || null,
-		server : req.body.server || req.headers['x-forwarded-for'] || req.connection.remoteAddress,
-		userAgent : req.body.userAgent ||  req.headers['user-agent'] || req.connection.remoteAddress,
-		date : new Date(req.body.date) || new Date(),
-		email : req.body.email,
+		action : req.body.action || null,
+		jsonChangedFields : req.body.jsonChangedFields|| null,
+		table : req.body.table|| null,
+		primaryKeyId : req.body.primaryKeyId|| null,
+		sessionHash : req.body.sessionHash|| null,
+		operationHash : req.body.operationHash|| null,
+		url : req.body.url|| null,
+		urlParameters : req.body.urlParameters|| null,
+		createdAt : new Date(req.body.createdAt)|| new Date(),
+		source : req.body.source || 'generic' ,
 	}
 }
 
