@@ -2,6 +2,11 @@ const express = require('express')
 const bodyParser = require("body-parser");
 const elasticsearch = require('elasticsearch');
 
+
+require('dotenv').config({
+  path: process.env.NODE_ENV.toLowerCase() === "production" ? ".env.production" : ".env"
+})
+
 const app = express()
 const port = 3001
 
@@ -15,25 +20,14 @@ app.use(bodyParser.json());
 app.post(
 	'/',
 	(req, res) => {
-
+		console.log('ENV: ', process.env.NODE_ENV)
+		console.log('PORT: ', process.env.APP_PORT)
 		let parameters = handleParameters(req);
 		client.index(
 			{
 				index: req.body.source,
 				type: 'posts',
-				body: {
-					userId : parameters.userId,
-					action : parameters.action,
-					jsonChangedFields : parameters.jsonChangedFields,
-					table : parameters.table,
-					primaryKeyId : parameters.primaryKeyId,
-					sessionHash : parameters.sessionHash,
-					operationHash : parameters.operationHash,
-					url : parameters.url,
-					urlParameters : parameters.urlParameters,
-					createdAt : parameters.createdAt,
-				}
-
+				body: handleParameters(req)
 			},
 			function(err, resp, status) {
 				console.log('ERRO: ', err);
