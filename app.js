@@ -33,6 +33,7 @@ app.post(
 					server : parameters.server,
 					userAgent : parameters.userAgent,
 					date : parameters.date,
+					email : parameters.email,
 				}
 
 			},
@@ -63,6 +64,7 @@ const handleParameters = (req) => {
 		server : req.body.server || req.headers['x-forwarded-for'] || req.connection.remoteAddress,
 		userAgent : req.body.userAgent ||  req.headers['user-agent'] || req.connection.remoteAddress,
 		date : new Date(req.body.date) || new Date(),
+		email : req.body.email,
 	}
 }
 
