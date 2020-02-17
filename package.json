@@ -1,0 +1,16 @@
+{
+  "name": "poc_logstash_operand",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "elasticsearch": "^16.6.0",
+    "express": "^4.17.1",
+    "node-datetime": "^2.1.2"
+  }
+}
