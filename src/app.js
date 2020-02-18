@@ -8,7 +8,7 @@ require('dotenv').config({
 })
 
 const app = express()
-const port = process.env.APP_PORT
+const port = 3001
 console.log('porta', process.env.APP_PORT);
 const log = bunyan.createLogger({
     name: process.env.APP_NAME,
