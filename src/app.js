@@ -1,17 +1,28 @@
 const express = require('express')
 const bodyParser = require("body-parser");
 const elasticsearch = require('elasticsearch');
-
+const bunyan = require('bunyan');
 
 require('dotenv').config({
-  path: process.env.NODE_ENV.toLowerCase() === "production" ? ".env.production" : ".env"
+  path: process.env.NODE_ENV === "production" ? ".env.production" : ".env"
 })
 
 const app = express()
-const port = 3001
+const port = process.env.APP_PORT
+console.log('porta', process.env.APP_PORT);
+const log = bunyan.createLogger({
+    name: process.env.APP_NAME,
+    streams: [{
+        type: process.env.LOG_TYPE,
+        path: process.env.LOG_PATH,
+        period: process.env.LOG_PERIOD,
+        count: parseInt(process.env.LOG_COUNT)
+    }]
+});
 
-let client = new elasticsearch.Client({
-   hosts: [ 'http://localhost:9200']
+
+const client = new elasticsearch.Client({
+   hosts: [ `http://${process.env.ELASTIC_SEARCH_HOST}:${process.env.ELASTIC_SEARCH_PORT}`]
 });
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -20,9 +31,6 @@ app.use(bodyParser.json());
 app.post(
 	'/',
 	(req, res) => {
-		console.log('ENV: ', process.env.NODE_ENV)
-		console.log('PORT: ', process.env.APP_PORT)
-		let parameters = handleParameters(req);
 		client.index(
 			{
 				index: req.body.source,
@@ -30,13 +38,18 @@ app.post(
 				body: handleParameters(req)
 			},
 			function(err, resp, status) {
-				console.log('ERRO: ', err);
-				console.log('RESP: ', resp);
-				console.log('STAT: ', status);
+				if (err) {
+					log.error(err)
+				}
 			}
 
 		);
-		res.send('fim')
+		res.json({
+			status: 'success',
+			message: `Log to be sent to ElasticSeach at http://${process.env.ELASTIC_SEARCH_HOST}:${process.env.ELASTIC_SEARCH_PORT}`,
+			index: req.body.source,
+			data: handleParameters(req)
+		})
 	}
 )
 
