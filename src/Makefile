@@ -1,5 +1,4 @@
 up:
-	cd src
 	docker run -d -p 3001:3001 -it --name operand_log operandlog
 
 down:

@@ -9,7 +9,7 @@ require('dotenv').config({
 
 const app = express()
 const port = 3001
-console.log('porta', process.env.APP_PORT);
+
 const log = bunyan.createLogger({
     name: process.env.APP_NAME,
     streams: [{
@@ -33,7 +33,7 @@ app.post(
 	(req, res) => {
 		client.index(
 			{
-				index: req.body.source,
+				index: 'stack_operand',
 				type: 'posts',
 				body: handleParameters(req)
 			},
@@ -60,6 +60,7 @@ const handleParameters = (req) => {
 	}
 	return {
 		userId : req.body.userId || null,
+		clientId : req.body.clientId || null,
 		action : req.body.action || null,
 		jsonChangedFields : req.body.jsonChangedFields|| null,
 		table : req.body.table|| null,
